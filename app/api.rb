@@ -39,7 +39,6 @@ module App
     end
 
     def server(type, params, request)
-      ENV['OS_TENANT_NAME'] = params['project']
       Kanmon.init_yao
       s = Kanmon::Server.new(params['id'], params['port'], params['ip'] || request.ip)
       s.user_name = params['user']
@@ -48,7 +47,6 @@ module App
     end
 
     def securitygroup(type, params, request)
-      ENV['OS_TENANT_NAME'] = params['project']
       Kanmon.init_yao
       Kanmon::SecurityGroup.new(params['id'], params['port'], params['ip'] || request.ip).send(type)
       'success'

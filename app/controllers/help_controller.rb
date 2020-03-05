@@ -6,6 +6,6 @@ class HelpController < BaseController
   # help
   def help
     view.reply(":eye: Only visible to you で表示します")
-    return view.show_usage
+    view.tell(view.show_usage)
   end
 end

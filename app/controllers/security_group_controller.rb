@@ -20,7 +20,6 @@ class SecurityGroupController < BaseController
     end
 
     query = %w(
-      project
       id
       ip
       port

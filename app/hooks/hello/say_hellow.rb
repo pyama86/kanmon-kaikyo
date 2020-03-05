@@ -18,7 +18,7 @@ module App
             channel: Settings.hooks.hello.channel,
             text: text,
             as_user: 'true',
-            icon_emoji: :sssbot,
+            icon_emoji: :kanmon_kaikyo,
           }
 
           App::Registry.bot_token_client.chat_postMessage(params)
@@ -31,7 +31,7 @@ module App
           end
 
           if App.env.development?
-            `terminal-notifier -title sssbot -message 'successfully connected'`
+            `terminal-notifier -title kanmon_kaikyo -message 'successfully connected'`
           end
         end
       end

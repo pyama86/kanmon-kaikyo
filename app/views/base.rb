@@ -22,7 +22,7 @@ module App
 
       def reply(text, options={})
         message = {
-          icon_emoji: :sssbot,
+          icon_emoji: :kanmon_kaikyo,
           channel: data.channel,
           text: text,
           as_user: true,
@@ -34,7 +34,7 @@ module App
       def tell(text, options={})
         message = {
           username:  client.name,
-          icon_emoji: :sssbot,
+          icon_emoji: :kanmon_kaikyo,
           channel: data.channel,
           user: data.user,
           text: text,
