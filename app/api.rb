@@ -41,7 +41,7 @@ module App
     def server(type, params, request)
       Kanmon.init_yao
       s = Kanmon::Server.new(params['id'], params['port'], params['ip'] || request.ip)
-      s.user_name = params['user']
+      s.user_name = App::Registry.find(:bot_token_client).users_info(user: params['user']).user.name
       s.send(type)
       'success'
     rescue Kanmon::AlreadySecurityExistsError
