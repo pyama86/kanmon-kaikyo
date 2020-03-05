@@ -44,12 +44,16 @@ module App
       s.user_name = params['user']
       s.send(type)
       'success'
+    rescue Kanmon::AlreadySecurityExistsError
+      'already exist'
     end
 
     def securitygroup(type, params, request)
       Kanmon.init_yao
       Kanmon::SecurityGroup.new(params['id'], params['port'], params['ip'] || request.ip).send(type)
       'success'
+    rescue Kanmon::AlreadySecurityExistsError
+      'already exist'
     end
   end
 end
