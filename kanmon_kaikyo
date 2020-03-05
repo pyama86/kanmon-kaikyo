@@ -1,0 +1,32 @@
+#!/usr/bin/env ruby
+
+$LOAD_PATH.push('./lib')
+
+require './app/bot'
+
+bot = App::Bot.instance
+bot.logger.info("APP_ENV: %s" % ENV['APP_ENV'])
+
+App::Hooks::Hello.constants.each { |klass_name|
+  klass = "App::Hooks::Hello::#{klass_name}"
+  bot.logger.info("register hook :hello -> #{klass}")
+  bot.on(:hello, klass.constantize.new)
+}
+
+BaseController.controller_classes.each { |c|
+  controller = c.instance.class
+  model      = c.instance.model.class
+  view       = c.instance.view.class
+  bot.logger.info("register controller #{controller}")
+  bot.logger.info("  + model: #{model}")
+  bot.logger.info("  +  view: #{view}")
+}
+
+# TODO
+if $0.match(/unicorn/)
+  bot.logger.info("rack application booting")
+else
+  bot.logger.info("kanmon-kaikyo booting")
+  bot.start_rtm_pong_server
+  bot.run
+end
