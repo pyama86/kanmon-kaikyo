@@ -39,9 +39,10 @@ module App
     end
 
     def server(type, params, request)
+      ENV['OS_TENANT_NAME'] = params['tenant_name'] if params['tenant_name']
       Kanmon.init_yao
       s = Kanmon::Server.new(params['id'], params['port'], params['ip'] || request.ip)
-      s.user_name = App::Registry.find(:bot_token_client).users_info(user: params['user']).user.name
+      s.user_name = params['username'] || App::Registry.find(:bot_token_client).users_info(user: params['user']).user.name
       s.send(type)
       'success'
     rescue Kanmon::AlreadySecurityExistsError
