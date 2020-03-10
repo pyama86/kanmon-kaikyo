@@ -32,10 +32,25 @@ class SecurityGroupController < BaseController
         next unless m
         {
           type: "section",
-          text: {
-            type: "mrkdwn",
-            text: "名前:#{s.name} 作成日:#{s['created_at']} テナント:#{t.name}"
-          },
+          fields: [
+            {
+              type: "mrkdwn",
+              text: "*名前*:#{s.name}"
+            },
+            {
+              type: "mrkdwn",
+              text: "*作成日*:#{s['created_at']}"
+            },
+            {
+              type: "mrkdwn",
+              text: "*テナント*:#{t.name}"
+            },
+            {
+              type: "mrkdwn",
+              text: "*作成者*:#{m[3]}"
+            }
+
+          ],
           accessory: {
             action_id: "delete_sg_handler",
             type: "button",
