@@ -66,17 +66,16 @@ class SecurityGroupController < BaseController
       return view.show_usage
     end
 
-    params["tenant_name"] = if type == "server"
-                              Yao::Project.get(Yao::Server.get(params["id"]).tenant_id).name
-                            else
-                              Yao::Project.get(Yao::SecurityGroup.get(params["id"]).tenant_id).name
-                            end
+    tenant_name = if type == "server"
+                    Yao::Project.get(Yao::Server.get(params["id"]).tenant_id).name
+                  else
+                    Yao::Project.get(Yao::SecurityGroup.get(params["id"]).tenant_id).name
+                  end
     query = %w(
       id
       ip
       port
-      tenant_name
     ).map { |n| "#{n}=#{params[n]}" if params[n] }.compact.join("&")
-    view.tell("please open url: #{Settings.url}/#{type}/#{params['action']}?#{query}&user=#{data.user}")
+    view.tell("please open url: #{Settings.url}/#{type}/#{params['action']}?#{query}&user=#{data.user}&tenant_name=#{tenant_name}")
   end
 end
