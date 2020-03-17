@@ -21,10 +21,6 @@ class SecurityGroupController < BaseController
     execute(match, "server")
   end
 
-  def securitygroup
-    execute(match, "securitygroup")
-  end
-
   def list
     blocks = Yao::Project.list.map do |t|
       Yao::SecurityGroup.list(project_id: t.id).map do |s|
@@ -81,16 +77,16 @@ class SecurityGroupController < BaseController
       return view.show_usage
     end
 
-    tenant_name = if type == "server"
-                    Yao::Project.get(Yao::Server.get(params["id"]).tenant_id).name
-                  else
-                    Yao::Project.get(Yao::SecurityGroup.get(params["id"]).tenant_id).name
-                  end
-    query = %w(
-      id
-      ip
-      port
-    ).map { |n| "#{n}=#{params[n]}" if params[n] }.compact.join("&")
-    view.tell("please open url: #{Settings.url}/#{type}/#{params['action']}?#{query}&user=#{data.user}&tenant_name=#{tenant_name}")
+    if params["id_or_name"] =~ /[^-]{8}-[^-]{4}-[^-]{4}-[^-]{4}-[^-]{12}/
+      s = Yao::Server.get(params["id_or_name"])
+      tenant_name = Yao::Project.get(s.tenant_id).name
+      view.tell("server: #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{tenant_name}&id=#{params["id_or_name"]}")
+    elsif params["tenant"]
+      Yao::Server.list(all_tenants: true, project_id: Yao::Project.list.find {|t| t.name == params["tenant"] }.id).select {|s| s.name =~ /#{params["id_or_name"]}/ }.each do |s|
+        view.tell("server #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{params["tenant"]}&id=#{s.id}")
+      end
+    else
+      view.tell("sorry,can't response your request")
+    end
   end
 end
