@@ -1,7 +1,7 @@
 require 'sinatra/reloader' if development?
 require 'sinatra/custom_logger'
 require 'kanmon'
-
+require "thread" 
 module App
   class Api < Sinatra::Base
     helpers Sinatra::CustomLogger
@@ -20,7 +20,12 @@ module App
 
     get '/server/open' do
       content_type 'text/plain; charset=utf8'
-      server("open", params, request)
+      begin
+        m.lock
+        server("open", params, request)
+      ensure
+        m.unlock
+      end
     end
 
     get '/server/close' do
@@ -36,6 +41,11 @@ module App
     get '/securitygroup/close' do
       content_type 'text/plain; charset=utf8'
       securitygroup("close", params, request)
+    end
+
+    def m
+      @locker ||= Mutex::new
+      @locker
     end
 
     def server(type, params, request)
