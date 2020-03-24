@@ -30,7 +30,9 @@ class SecurityGroupController < BaseController
         begin
           ENV['OS_TENANT_NAME'] = t.name
           Kanmon.init_yao
-          Kanmon::Server.new(m[2], nil).close
+          server = Kanmon::Server.new(m[2], nil)
+          server.user_name = m[3]
+          server.close
           view.reply("heimon success #{s.name}")
         rescue => e
           view.reply("can't heimon #{s.name}")
@@ -39,6 +41,7 @@ class SecurityGroupController < BaseController
         end
       end
     end
+    view.reply("heimon done!")
   end
 
   def list
