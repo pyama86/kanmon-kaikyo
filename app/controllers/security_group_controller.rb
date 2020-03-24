@@ -30,9 +30,8 @@ class SecurityGroupController < BaseController
         begin
           ENV['OS_TENANT_NAME'] = t.name
           Kanmon.init_yao
-          server = Kanmon::Server.new(m[2], nil)
-          server.user_name = m[3]
-          server.close
+          Yao::Server.remove_security_group(m[2], s.id) rescue nil
+          Yao::SecurityGroup.destroy(s.id)
           view.reply("heimon success #{s.name}")
         rescue => e
           view.reply("can't heimon #{s.name}")
@@ -89,7 +88,11 @@ class SecurityGroupController < BaseController
       blocks: blocks
     }
 
-    view.reply(nil, params)
+    if blocks.empty?
+      view.reply("not found")
+    else
+      view.reply(nil, params)
+    end
 
   end
   private
