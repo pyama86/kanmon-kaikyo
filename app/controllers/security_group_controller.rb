@@ -26,8 +26,17 @@ class SecurityGroupController < BaseController
       Yao::SecurityGroup.list(project_id: t.id).map do |s|
         m = s.name.match(/kanmon-([^:]+):(.+)-user:(.+)$/)
         next unless m
-        Yao::Server.remove_security_group(m[2], s.name) rescue nil
-        Yao::SecurityGroup.destroy(s.id)
+        tenant = ENV['OS_TENANT_NAME']
+        begin
+          ENV['OS_TENANT_NAME'] = t.name
+          Kanmon.init_yao
+          Kanmon::Server.new(m[2], nil).close
+          view.reply("heimon success #{s.name}")
+        rescue => e
+          view.reply("can't heimon #{s.name}")
+        ensure
+          ENV['OS_TENANT_NAME'] = tenant
+        end
       end
     end
   end
