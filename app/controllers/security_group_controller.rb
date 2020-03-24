@@ -21,6 +21,17 @@ class SecurityGroupController < BaseController
     execute(match, "server")
   end
 
+  def heimon
+    Yao::Project.list.map do |t|
+      Yao::SecurityGroup.list(project_id: t.id).map do |s|
+        m = s.name.match(/kanmon-([^:]+):(.+)-user:(.+)$/)
+        next unless m
+        Yao::Server.remove_security_group(m[2], s.name) rescue nil
+        Yao::SecurityGroup.destroy(s.id)
+      end
+    end
+  end
+
   def list
     blocks = Yao::Project.list.map do |t|
       Yao::SecurityGroup.list(project_id: t.id).map do |s|
