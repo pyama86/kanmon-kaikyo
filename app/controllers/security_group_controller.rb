@@ -34,7 +34,6 @@ class SecurityGroupController < BaseController
           Yao::Server.remove_security_group(m[2], s.id) rescue nil
           Yao::SecurityGroup.destroy(s.id)
           view.reply("heimon success #{s.name}")
-          return
         end
       rescue => e
         view.reply("can't heimon tenant #{t.name} error:#{e.inspect}")
