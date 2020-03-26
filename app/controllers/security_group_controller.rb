@@ -22,22 +22,24 @@ class SecurityGroupController < BaseController
   end
 
   def heimon
-    Yao::Project.list.map do |t|
-      Yao::SecurityGroup.list(project_id: t.id).map do |s|
-        m = s.name.match(/kanmon-([^:]+):(.+)-user:(.+)$/)
-        next unless m
+    Yao::Project.list.each do |t|
+      next if %w(petit).include?(t.name)
+      begin
         tenant = ENV['OS_TENANT_NAME']
-        begin
-          ENV['OS_TENANT_NAME'] = t.name
-          Kanmon.init_yao
+        ENV['OS_TENANT_NAME'] = t.name
+        Kanmon.init_yao
+        Yao::SecurityGroup.list(project_id: t.id).each do |s|
+          m = s.name.match(/kanmon-([^:]+):(.+)-user:(.+)$/)
+          next unless m
           Yao::Server.remove_security_group(m[2], s.id) rescue nil
           Yao::SecurityGroup.destroy(s.id)
           view.reply("heimon success #{s.name}")
-        rescue => e
-          view.reply("can't heimon #{s.name}")
-        ensure
-          ENV['OS_TENANT_NAME'] = tenant
+          return
         end
+      rescue => e
+        view.reply("can't heimon tenant #{t.name} error:#{e.inspect}")
+      ensure
+        ENV['OS_TENANT_NAME'] = tenant
       end
     end
     view.reply("heimon done!")
