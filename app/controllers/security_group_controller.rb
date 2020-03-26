@@ -41,6 +41,7 @@ class SecurityGroupController < BaseController
         ENV['OS_TENANT_NAME'] = tenant
       end
     end
+    Kanmon.init_yao
     view.reply("heimon done!")
   end
 
