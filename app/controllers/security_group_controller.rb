@@ -1,3 +1,4 @@
+require 'raven'
 class SecurityGroupController < BaseController
   def self.instance
     Yao.configure do
@@ -100,21 +101,23 @@ class SecurityGroupController < BaseController
   private
 
   def execute(match, type)
-    params = model.params(match[:expression])
-    unless params
-      return view.show_usage
-    end
-
-    if params["id_or_name"] =~ /[^-]{8}-[^-]{4}-[^-]{4}-[^-]{4}-[^-]{12}/
-      s = Yao::Server.get(params["id_or_name"])
-      tenant_name = Yao::Project.get(s.tenant_id).name
-      view.tell("server: #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{tenant_name}&id=#{params["id_or_name"]}")
-    elsif params["tenant"]
-      Yao::Server.list(all_tenants: true, project_id: Yao::Project.list.find {|t| t.name == params["tenant"] }.id).select {|s| s.name =~ /#{params["id_or_name"]}/ }.each do |s|
-        view.tell("server #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{params["tenant"]}&id=#{s.id}")
+    Raven.capture do
+      params = model.params(match[:expression])
+      unless params
+        return view.show_usage
       end
-    else
-      view.tell("sorry,can't response your request")
+
+      if params["id_or_name"] =~ /[^-]{8}-[^-]{4}-[^-]{4}-[^-]{4}-[^-]{12}/
+        s = Yao::Server.get(params["id_or_name"])
+        tenant_name = Yao::Project.get(s.tenant_id).name
+        view.tell("server: #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{tenant_name}&id=#{params["id_or_name"]}")
+      elsif params["tenant"]
+        Yao::Server.list(all_tenants: true, project_id: Yao::Project.list.find {|t| t.name == params["tenant"] }.id).select {|s| s.name =~ /#{params["id_or_name"]}/ }.each do |s|
+          view.tell("server #{s.name} url: #{Settings.url}/#{type}/#{params['action']}?user=#{data.user}&tenant_name=#{params["tenant"]}&id=#{s.id}")
+        end
+      else
+        view.tell("sorry,can't response your request")
+      end
     end
   end
 end

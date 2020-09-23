@@ -1,7 +1,8 @@
 require 'sinatra/reloader' if development?
 require 'sinatra/custom_logger'
 require 'kanmon'
-require "thread" 
+require "thread"
+require 'raven'
 module App
   class Api < Sinatra::Base
     helpers Sinatra::CustomLogger
@@ -33,16 +34,6 @@ module App
       server("close", params, request)
     end
 
-    get '/securitygroup/open' do
-      content_type 'text/plain; charset=utf8'
-      securitygroup("open", params, request)
-    end
-
-    get '/securitygroup/close' do
-      content_type 'text/plain; charset=utf8'
-      securitygroup("close", params, request)
-    end
-
     def m
       @locker ||= Mutex::new
       @locker
@@ -57,6 +48,8 @@ module App
       'success'
     rescue Kanmon::AlreadySecurityExistsError
       'already exist'
+    rescue => e
+      Raven.capture_exception(e)
     end
 
     def securitygroup(type, params, request)

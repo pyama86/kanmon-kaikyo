@@ -1,6 +1,5 @@
 require 'slack-ruby-bot'
 require 'sinatra'
-require 'sinatra'
 require_relative '../app/registry'
 require_relative '../app/api'
 
