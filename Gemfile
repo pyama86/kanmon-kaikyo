@@ -14,3 +14,4 @@ gem 'faye-websocket'
 gem 'slack-ruby-bot'
 gem 'kanmon'
 gem "sentry-raven"
+gem "activesupport"
