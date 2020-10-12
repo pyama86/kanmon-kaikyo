@@ -1,3 +1,11 @@
+GIT
+  remote: https://github.com/buty4649/kanmon.git
+  revision: dbb8ffa9f5e558f04dd330fad8609c62af8f7638
+  specs:
+    kanmon (0.9.4)
+      thor (>= 0.20.0)
+      yao (>= 0.12.0)
+
 GEM
   remote: https://rubygems.org/
   specs:
@@ -64,9 +72,6 @@ GEM
     i18n (1.8.5)
       concurrent-ruby (~> 1.0)
     json (2.3.1)
-    kanmon (0.9.3)
-      thor (>= 0.20.0)
-      yao (>= 0.12.0)
     kgio (2.11.3)
     minitest (5.14.2)
     multi_json (1.15.0)
@@ -129,7 +134,7 @@ DEPENDENCIES
   config
   dotenv
   faye-websocket
-  kanmon
+  kanmon!
   puma
   sentry-raven
   sinatra
