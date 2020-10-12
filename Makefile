@@ -1,4 +1,4 @@
-VERSION=0.0.17
+VERSION=0.0.18
 build:
 	docker build -t pyama/kanmon-kaikyo:$(VERSION)  .
 	docker push pyama/kanmon-kaikyo:$(VERSION)
