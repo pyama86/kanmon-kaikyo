@@ -40,6 +40,7 @@ module App
     end
 
     def server(type, params, request)
+      return 'server id is required' if !params['id'] || params['id'].empty?
       ENV['OS_TENANT_NAME'] = params['tenant_name'] if params['tenant_name']
       Kanmon.init_yao
       s = Kanmon::Server.new(params['id'], params['port'], params['ip'] || request.ip)
